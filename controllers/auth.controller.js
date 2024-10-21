@@ -86,3 +86,30 @@ export const logout = (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, newPassword, confirmPassword } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ error: "User email does not exist" });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ error: "Passwords don't match" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+        console.log("Error in resetPassword controller", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
