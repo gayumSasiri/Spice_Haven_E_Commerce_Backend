@@ -47,26 +47,22 @@ export const createOrder = async (req, res) => {
       };
     }
 
-    // Loop through the cart to update product quantity
     for (const item of cart) {
         const product = await Product.findById(item.productId).session(session);
         if (!product) {
           throw new Error(`Product with ID ${item.productId} not found`);
         }
   
-        // Update product's quantityInGrams
         if (product.quantityInGrams < item.quantity) {
           throw new Error(`Insufficient stock for product ${product.title}`);
         }
   
-        product.quantityInGrams -= item.quantity; // Decrease quantity
-        await product.save({ session }); // Save product within the session
+        product.quantityInGrams -= item.quantity; 
+        await product.save({ session }); 
     }
 
-    // Save the new order
     await newOrder.save({ session });
 
-    // Commit the transaction
     await session.commitTransaction();
     session.endSession();
 
