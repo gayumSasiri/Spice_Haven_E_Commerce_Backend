@@ -32,6 +32,16 @@ const productSchema = new mongoose.Schema({
     quantityInGrams: {
         type: Number,
         required: true
+    },
+    rating: {
+        rate: { 
+            type: Number, 
+            default: () => (Math.random() * 10).toFixed(1) 
+        },
+        count: { 
+            type: Number, 
+            default: 100 
+        }
     }
 }, { timestamps: true });
 

@@ -54,3 +54,20 @@ export const addNewProduct = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export const getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find(); 
+
+        if (!products || products.length === 0) {
+            return res.status(404).json({ message: 'No products found' });
+        }
+
+        res.status(200).json(products);
+
+    } catch (error) {
+        console.log("Error in Get All Products: ", error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
+
